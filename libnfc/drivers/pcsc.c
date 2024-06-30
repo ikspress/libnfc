@@ -156,7 +156,7 @@ static int pcsc_transmit(struct nfc_device *pnd, const uint8_t *tx, const size_t
   data->last_error = SCardTransmit(data->hCard, &data->ioCard, tx, tx_len,
                                    NULL, rx, &dw_rx_len);
   if (data->last_error != SCARD_S_SUCCESS) {
-    log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%s", "PCSC transmit failed");
+    log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "PCSC transmit failed");
     return NFC_EIO;
   }
   *rx_len = dw_rx_len;
@@ -534,10 +534,10 @@ pcsc_open(const nfc_context *context, const nfc_connstring connstring)
   // Test if context succeeded
   if (!(pscc = pcsc_get_scardcontext()))
     goto error;
-  DRIVER_DATA(pnd)->last_error = SCardConnect(*pscc, ndd.pcsc_device_name, SCARD_SHARE_DIRECT, 0 | 1, &(DRIVER_DATA(pnd)->hCard), (void *) & (DRIVER_DATA(pnd)->ioCard.dwProtocol));
+  DRIVER_DATA(pnd)->last_error = SCardConnect(*pscc, ndd.pcsc_device_name, SCARD_SHARE_DIRECT, 0 | 1, &(DRIVER_DATA(pnd)->hCard), &(DRIVER_DATA(pnd)->ioCard.dwProtocol));
   if (DRIVER_DATA(pnd)->last_error != SCARD_S_SUCCESS) {
     // We can not connect to this device.
-    log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%s", "PCSC connect failed");
+    log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "PCSC connect failed");
     goto error;
   }
   // Configure I/O settings for card communication
@@ -545,7 +545,7 @@ pcsc_open(const nfc_context *context, const nfc_connstring connstring)
   DRIVER_DATA(pnd)->dwShareMode = SCARD_SHARE_DIRECT;
 
   // Done, we found the reader we are looking for
-  snprintf(pnd->name, sizeof(pnd->name), "%s", ndd.pcsc_device_name);
+  strcpy(pnd->name, ndd.pcsc_device_name);
 
   pnd->driver = &pcsc_driver;
 
@@ -709,14 +709,14 @@ static const char *stringify_error(const LONG pcscError)
       msg = "Feature not supported.";
       break;
     default:
-      (void)snprintf(strError, sizeof(strError) - 1, "Unknown error: 0x%08lX",
+      snprintf(strError, sizeof(strError) - 1, "Unknown error: 0x%08lX",
                      pcscError);
   };
 
   if (msg)
-    (void)strncpy(strError, msg, sizeof(strError));
+    strncpy(strError, msg, sizeof(strError));
   else
-    (void)snprintf(strError, sizeof(strError) - 1, "Unknown error: 0x%08lX",
+    snprintf(strError, sizeof(strError) - 1, "Unknown error: 0x%08lX",
                    pcscError);
 
   /* add a null byte */

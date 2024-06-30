@@ -141,7 +141,7 @@ uart_set_speed(serial_port sp, const uint32_t uiPortSpeed)
   // Set baud rate
   spw->dcb.BaudRate = uiPortSpeed;
   if (!SetCommState(spw->hPort, &spw->dcb)) {
-    log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "%s", "Unable to apply new speed settings.");
+    log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "Unable to apply new speed settings.");
     return;
   }
   PurgeComm(spw->hPort, PURGE_RXABORT | PURGE_RXCLEAR);

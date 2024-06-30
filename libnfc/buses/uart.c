@@ -217,7 +217,7 @@ uart_set_speed(serial_port sp, const uint32_t uiPortSpeed)
   cfsetispeed(&(UART_DATA(sp)->termios_new), stPortSpeed);
   cfsetospeed(&(UART_DATA(sp)->termios_new), stPortSpeed);
   if (tcsetattr(UART_DATA(sp)->fd, TCSADRAIN, &(UART_DATA(sp)->termios_new)) == -1) {
-    log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "%s", "Unable to apply new speed settings.");
+    log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "Unable to apply new speed settings.");
   }
 }
 
@@ -322,13 +322,13 @@ select:
     }
     // Read time-out
     if (res == 0) {
-      log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%s", "Timeout!");
+      log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "Timeout!");
       return NFC_ETIMEOUT;
     }
 
     if (FD_ISSET(iAbortFd, &rfds)) {
       // Abort requested
-      log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%s", "Abort!");
+      log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "Abort!");
       close(iAbortFd);
       return NFC_EOPABORTED;
     }
